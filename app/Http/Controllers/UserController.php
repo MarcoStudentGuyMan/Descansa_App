@@ -19,12 +19,12 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8|confirmed',
         ]);
-    
+
         $user = new User();
         $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->password = Hash::make($request->input('password'));
-    
+
         try {
             $user->save();
             return redirect("/login")->with('success', 'You have successfully registered.');
@@ -39,36 +39,36 @@ class UserController extends Controller
             'email' => 'required',
             'password' => 'required'
         ]);
-        $user = User::where('email', '=', $request->email)->first();
-        if($user){
-            if(Hash::check($request->password, $user->password)){
+
+        $user = User::where('email', $request->email)->first();
+        if ($user) {
+            if (Hash::check($request->password, $user->password)) {
                 $request->session()->put('loginID', $user->id);
                 return redirect('/');
-
-            }else
-            {
-                return back()->with('fail', 'Invalid Credentials');
+            } else {
+                return back()->withErrors(['email' => 'Invalid Email', 'password' => 'Invalid Password']);
             }
-
-        }else{
-            return back()->with('fail', 'Invalid Credentials');
+        } else {
+            return back()->withErrors(['email' => 'Invalid Email', 'password' => 'Invalid Password']);
         }
     }
- 
-    public function home(Request $request){
-        $data = array();
 
-        if(Session::has('loginID')){
-          $data = User::where('id', '=', Session::get('loginID'))->first();  
+    public function home(Request $request)
+    {
+        $data = [];
+
+        if (Session::has('loginID')) {
+            $data = User::where('id', Session::get('loginID'))->first();
         }
-        return view ('home', compact('data'));
 
+        return view('home', compact('data'));
     }
 
-    public function logout(){
-        if(Session::has('loginID')){
+    public function logout()
+    {
+        if (Session::has('loginID')) {
             Session::pull('loginID');
-           return redirect('/login');
+            return redirect('/login');
         }
     }
 }
