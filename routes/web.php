@@ -34,3 +34,6 @@ Route::get('/join', function() {
 });
 Route::post("/register", [UserController::class, "register"])->name("register");
 
+Route::get('/list', [UserController::class, 'index'])->name('orders.index');
+
+Route::post('/create-order', [UserController::class, 'createOrder']);

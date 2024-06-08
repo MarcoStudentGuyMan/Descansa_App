@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Order;
@@ -41,13 +40,9 @@ class UserController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
-        if ($user) {
-            if (Hash::check($request->password, $user->password)) {
-                $request->session()->put('loginID', $user->id);
-                return redirect('/');
-            } else {
-                return back()->withErrors(['email' => 'Invalid Email', 'password' => 'Invalid Password']);
-            }
+        if ($user && Hash::check($request->password, $user->password)) {
+            $request->session()->put('loginID', $user->id);
+            return redirect('/');
         } else {
             return back()->withErrors(['email' => 'Invalid Email', 'password' => 'Invalid Password']);
         }
@@ -56,11 +51,9 @@ class UserController extends Controller
     public function home(Request $request)
     {
         $data = [];
-
         if (Session::has('loginID')) {
             $data = User::where('id', Session::get('loginID'))->first();
         }
-
         return view('home', compact('data'));
     }
 
@@ -68,7 +61,44 @@ class UserController extends Controller
     {
         if (Session::has('loginID')) {
             Session::pull('loginID');
-            return redirect('/login');
         }
+        return redirect('/login');
+    }
+
+
+    // Orders
+
+    
+    public function createOrder(Request $request)
+    {
+        $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*.product_name' => 'required|string',
+            'items.*.product_price' => 'required|numeric',
+            'items.*.quantity' => 'required|integer|min:1',
+            'items.*.total_price' => 'required|numeric|min:0',
+            'items.*.product_image' => 'nullable|string',
+        ]);
+
+        $order = Order::create([]);
+
+        foreach ($request->items as $item) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_name' => $item['product_name'],
+                'product_price' => $item['product_price'],
+                'quantity' => $item['quantity'],
+                'total_price' => $item['total_price'],
+                'product_image' => $item['product_image'] ?? null,
+            ]);
+        }
+
+        return response()->json(['message' => 'Order created successfully'], 201);
+    }
+
+    public function index()
+    {
+        $orders = Order::with('items')->get();
+        return view('list', compact('orders'));
     }
 }
