@@ -68,33 +68,48 @@ class UserController extends Controller
 
     // Orders
 
-    
+
     public function createOrder(Request $request)
-    {
-        $request->validate([
-            'items' => 'required|array|min:1',
-            'items.*.product_name' => 'required|string',
-            'items.*.product_price' => 'required|numeric',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.total_price' => 'required|numeric|min:0',
-            'items.*.product_image' => 'nullable|string',
-        ]);
+{
+    $request->validate([
+        'order_items' => 'required|array|min:1',
+        'order_items.*.product_name' => 'required|string',
+        'order_items.*.product_price' => 'required|numeric',
+        'order_items.*.quantity' => 'required|integer|min:1',
+        'order_items.*.total_price' => 'required|numeric|min:0',
+        'order_items.*.product_image' => 'nullable|string',
+    ]);
 
-        $order = Order::create([]);
+    $totalPrice = 0;
 
-        foreach ($request->items as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_name' => $item['product_name'],
-                'product_price' => $item['product_price'],
-                'quantity' => $item['quantity'],
-                'total_price' => $item['total_price'],
-                'product_image' => $item['product_image'] ?? null,
-            ]);
-        }
-
-        return response()->json(['message' => 'Order created successfully'], 201);
+    // Calculate total price
+    foreach ($request->order_items as $item) {
+        $totalPrice += $item['total_price'];
     }
+
+    // Create the order
+    $order = Order::create([
+        'total_price' => $totalPrice,
+        // Add other fields as needed
+    ]);
+
+    // Create order items and associate them with the order
+    foreach ($request->order_items as $item) {
+        OrderItem::create([
+            'order_id' => $order->id,
+            'product_name' => $item['product_name'],
+            'product_price' => $item['product_price'],
+            'quantity' => $item['quantity'],
+            'total_price' => $item['total_price'],
+            'product_image' => $item['product_image'] ?? null,
+        ]);
+    }
+
+    // Return a JSON response indicating success
+    return response()->json(['message' => 'Order created successfully'], 201);
+}
+
+
 
     public function index()
     {

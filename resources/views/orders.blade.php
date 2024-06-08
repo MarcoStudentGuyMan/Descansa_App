@@ -6,10 +6,12 @@
     <link rel="icon" type="x-icon" href="/img/descansa_logo.jpg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Menu</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}"> <!-- Add CSRF token meta tag here -->
     <link rel="stylesheet" href="resources/css/design.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     @vite('resources/css/app.css')
 </head>
+
 <body class="">
 
     @include('navbar')
@@ -191,18 +193,26 @@ function orderItem(itemName, itemPrice, imageUrl) {
     const quantity = prompt("Enter quantity for " + itemName + ":");
     if (quantity !== null) {
         const data = {
-            itemName: itemName,
-            itemPrice: itemPrice,
-            quantity: quantity,
-            totalPrice: itemPrice * quantity,
-            imageUrl: imageUrl
+            order_items: [ // Change 'items' to 'order_items'
+                {
+                    product_name: itemName,
+                    product_price: itemPrice,
+                    quantity: quantity,
+                    total_price: itemPrice * quantity,
+                    product_image: imageUrl
+                }
+            ]
         };
 
+        // Fetch CSRF token from meta tag
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
         // Send the order data to the backend
-        fetch('/order', {
+        fetch('/create-order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token // Include CSRF token in headers
             },
             body: JSON.stringify(data),
         })
@@ -220,6 +230,7 @@ function orderItem(itemName, itemPrice, imageUrl) {
         });
     }
 }
+
 </script>
 
 </body>
