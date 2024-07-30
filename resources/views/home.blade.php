@@ -15,7 +15,7 @@
           <div class="text-7xl font-museo font-bold"> Order Taking System </div>
           <div class="flex flex-col text-lg font-inter mt-4 mb-10">
             <div>
-              This system will assist in managing orders to do stuff
+              This system will assist in managing orders to do things
           </div>
           </div>
           <div class="flex flex-row justify-start font-museo font-bold gap-10">
