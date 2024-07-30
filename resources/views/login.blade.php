@@ -41,11 +41,11 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-5 flex justify-center">
+            <div class="mt-5 flex justify-center text-white">
                 Don't have an account?
             </div>
             <div class="mt-5 flex justify-center hover:text-blue-800 ease-in-out transition duration-300 font-bold">
-                <a href="signup" class="unstyled">Sign up here</a>
+                <a href="signup" class="unstyled text-white">Sign up here</a>
             </div>
         </div>
     </form>

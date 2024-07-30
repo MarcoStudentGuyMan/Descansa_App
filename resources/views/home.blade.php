@@ -15,11 +15,11 @@
           <div class="text-7xl font-museo font-bold"> Order Taking System </div>
           <div class="flex flex-col text-lg font-inter mt-4 mb-10">
             <div>
-              This system will assist in managing orders
+              This system will assist in managing orders to do stuff
           </div>
           </div>
           <div class="flex flex-row justify-start font-museo font-bold gap-10">
-            <a href="/stalls">
+            <a href="/orders">
             <button class="bg-blue-500 text-white py-3 px-10 rounded-xl hover:bg-blue-700 ease-in-out transition duration-300">
               Menu
             </button>

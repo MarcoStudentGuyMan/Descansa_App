@@ -224,9 +224,11 @@ function orderItem(itemName, itemPrice, imageUrl) {
         })
         .then(data => {
             console.log('Order placed successfully:', data);
+            alert('Order placed successfully!');
         })
         .catch(error => {
             console.error('Error placing order:', error);
+            alert('Error placing order: ' + error.message);
         });
     }
 }
